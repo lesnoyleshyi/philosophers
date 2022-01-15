@@ -12,72 +12,76 @@
 
 #include "philo.h"
 
-void	*hello(void *params);
+void	*simulation(void *params);
 
 int	main(int argc, char *argv[])
 {
 	struct timeval	cur_time;
+	philo_t			*ph_arr;
 	t_data 			params;
 	int				i;
 	int				ret;
 
-	gettimeofday(&cur_time, NULL);
-	ft_get_arguments(&params, argc, argv);
-	i = 0;
-	while (i < params.philo_count)
+	if (ft_get_arguments(&params, &ph_arr, argc, argv) == 1)
 	{
-		ret = pthread_create(&(params.dudes_arr[i].dude), NULL, hello, &(params.dudes_arr[i]));
-		if (ret != 0)
-			ft_perror_and_exit("Error creating thread!\n");
-		i++;
+		printf("Error in parsing params\n");
+		return (1);
 	}
-	i = 0;
-	while (i < params.philo_count)
+	i = -1;
+	while (++i < params.philo_count)
 	{
-		ret = pthread_join(params.dudes_arr[i].dude, NULL);
+		ret = pthread_create(&ph_arr[i].dude, NULL, simulation, &ph_arr[i]);
 		if (ret != 0)
-			ft_perror_and_exit("Error joining thread!\n");
-		i++;
+		{
+			printf("Error creating threads\n");
+			return (1);
+		}
 	}
-	printf("Bye!\n");
+	i = -1;
+	while (++i < params.philo_count)
+	{
+		ret = pthread_join(ph_arr[i].dude, NULL);
+		if (ret != 0)
+		{
+			printf("Error joining threads\n");
+			return (1);
+		}
+	}
 	return (0);
 }
 
-void	ft_get_arguments(t_data *params, int argc, char *argv[])
+int	ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[])
 {
 	int	philo_count;
 
 	if (argc > 6 || argc < 5)
-		ft_perror_and_exit("Wrong arguments count\n");
+		return (1);
 	philo_count = ft_uint_atoi(argv[1]);
 	params->philo_count = philo_count;
 	params->fork_count = philo_count;
 	params->die_t = ft_uint_atoi(argv[2]);
 	params->eat_t = ft_uint_atoi(argv[3]);
 	params->sleep_t = ft_uint_atoi(argv[4]);
-	if (params->sleep_t >= 1000000)
-		ft_perror_and_exit("Philosopher can't sleep more than 999999 usec\n");
 	params->lunches = ft_uint_atoi(argv[5]);
-	params->dudes_arr = (philo_t *)malloc(sizeof(philo_t ) * philo_count);
-	if (params->dudes_arr == NULL)
-		ft_perror_and_exit("Unable to allocate memory for threads\n");
+	*ph_arr = (philo_t *)malloc(sizeof(philo_t ) * philo_count);
+ 	if (philo_count == -1 || params->die_t == -1 || params->eat_t == -1
+		|| params->sleep_t == -1 || params->lunches == -1)
+ 		return (1);
+	if (*ph_arr == NULL)
+		return (1);
 	while (philo_count--)
-		params->dudes_arr[philo_count - 1].id = philo_count;
+	{
+		(*ph_arr)[philo_count].id = philo_count + 1;
+		(*ph_arr)[philo_count].data = params;
+	}
+	if (ft_create_mutexes(params) == 1)
+		return (1);
+	return (0);
 }
 
-void	ft_perror_and_exit(const char *message)
+long long	ft_uint_atoi(char *str)
 {
-	int	i;
-
-	i = 0;
-	while (message[i])
-		write(2, &message[i++], 1);
-	exit(EXIT_FAILURE);
-}
-
-unsigned int	ft_uint_atoi(char *str)
-{
-	long long	res;
+	unsigned long long	res;
 
 	res = 0;
 	if (!str)
@@ -85,7 +89,7 @@ unsigned int	ft_uint_atoi(char *str)
 	while ((*str > 8 && *str < 14) || *str == 32)
 		str++;
 	if (*str == '-')
-		ft_perror_and_exit("Arguments can't be negative\n");
+		return (-1);
 	if (*str == '+')
 		str++;
 	while (*str >= '0' && *str <= '9')
@@ -93,16 +97,42 @@ unsigned int	ft_uint_atoi(char *str)
 		res = res * 10 + (*str - '0');
 		str++;
 	}
-	if (res > 4294967295)
-		ft_perror_and_exit("Argument can't exceed uint range\n");
-	return (res);
+	if (res > 9223372036854775807)
+		return(-1);
+	return ((long long)res);
 }
 
-void	*hello(void *params)
+void	*simulation(void *params)
 {
-	philo_t	*data;
+	philo_t	*dudes_struct;
 
-	data = (philo_t *)params;
-	printf("hello from sniper monkey N%d\n", data->id);
+	dudes_struct = (philo_t *)params;
+//	ft_eat(data);
+	pthread_mutex_lock(dudes_struct->data->printer);
+	printf("hello from philosopher N%d\n", dudes_struct->id);
+	printf("PH %d knows that he is one of %d philosophers\n",dudes_struct->id, dudes_struct->data->philo_count);
+	pthread_mutex_unlock(dudes_struct->data->printer);
+	return (0);
+}
+
+//void	*ft_eat(philo_t *data)
+//{
+//	pthread_mutex_lock();
+//	ft_take_forks();
+//	ft_eat();
+//}
+
+int	ft_create_mutexes(t_data *params)
+{
+	pthread_mutex_t	*printer;
+	int				ret;
+
+	printer = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	if (!printer)
+		return (1);
+	params->printer = printer;
+	ret = pthread_mutex_init(printer, NULL);
+	if (ret != 0)
+		return (1);
 	return (0);
 }

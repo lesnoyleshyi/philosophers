@@ -18,25 +18,28 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-typedef struct philosopher
-{
-	int			id;
-	pthread_t	dude;
-}				philo_t;
-
 typedef struct data
 {
 	int				philo_count;
 	int				fork_count;
-	unsigned int	die_t;
-	unsigned int	eat_t;
-	unsigned int	sleep_t;
-	unsigned int	lunches;
-	philo_t 		*dudes_arr;
+	long long		die_t;
+	long long		eat_t;
+	long long		sleep_t;
+	long long		lunches;
+	pthread_mutex_t	*printer;
 }			t_data;
 
-void			ft_perror_and_exit(const char *message);
-void			ft_get_arguments(t_data *params, int argc, char *argv[]);
-unsigned int	ft_uint_atoi(char *str);
+typedef struct philosopher
+{
+	int			id;
+	pthread_t	dude;
+	t_data		*data;
+}				philo_t;
+
+
+int			ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[]);
+int			ft_create_mutexes(t_data *params);
+long long	ft_uint_atoi(char *str);
+
 
 #endif
