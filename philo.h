@@ -27,6 +27,7 @@ typedef struct data
 	long long		sleep_t;
 	long long		lunches;
 	pthread_mutex_t	*printer;
+	struct timeval	start_time;
 }			t_data;
 
 typedef struct philosopher
@@ -38,6 +39,7 @@ typedef struct philosopher
 
 
 int			ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[]);
+void		ft_get_start_time(t_data *data_struct);
 int			ft_create_mutexes(t_data *params);
 long long	ft_uint_atoi(char *str);
 

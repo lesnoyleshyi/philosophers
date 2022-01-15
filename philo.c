@@ -104,13 +104,18 @@ long long	ft_uint_atoi(char *str)
 
 void	*simulation(void *params)
 {
-	philo_t	*dudes_struct;
+	philo_t			*dudes_struct;
+	struct timeval	now;
 
 	dudes_struct = (philo_t *)params;
+	ft_get_start_time(dudes_struct->data);
 //	ft_eat(data);
+	gettimeofday(&now, NULL);
 	pthread_mutex_lock(dudes_struct->data->printer);
-	printf("hello from philosopher N%d\n", dudes_struct->id);
-	printf("PH %d knows that he is one of %d philosophers\n",dudes_struct->id, dudes_struct->data->philo_count);
+	printf("%ld.%d\t%d\tphilosopher sends hello\n",
+		   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+		   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+		   dudes_struct->id);
 	pthread_mutex_unlock(dudes_struct->data->printer);
 	return (0);
 }
@@ -135,4 +140,10 @@ int	ft_create_mutexes(t_data *params)
 	if (ret != 0)
 		return (1);
 	return (0);
+}
+
+void	ft_get_start_time(t_data *data_struct)
+{
+	if (data_struct->start_time.tv_sec == 0)
+		gettimeofday(&(data_struct->start_time), NULL);
 }
