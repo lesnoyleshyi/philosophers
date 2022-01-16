@@ -1,5 +1,5 @@
 
-#include "../philo.h"
+#include "../srcs/philo.h"
 #include "stdio.h"
 #define NUM_OF_THREADS 5
 static int	counter = 0;

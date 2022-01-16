@@ -1,5 +1,5 @@
 
-#include "../philo.h"
+#include "../srcs/philo.h"
 #include "stdio.h"
 #define NUM_OF_TREADS 5
 

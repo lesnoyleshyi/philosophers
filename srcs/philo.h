@@ -37,6 +37,8 @@ typedef struct philosopher
 	int				id;
 	pthread_t		dude;
 	t_data			*data;
+	struct timeval	now;
+	struct timeval	last_lunch;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
 }				philo_t;
@@ -49,6 +51,13 @@ void		ft_get_start_time(t_data *data_struct);
 int			ft_create_mutexes(t_data *params, philo_t *ph_arr, int fork_count);
 int			ft_provide_forks(t_data *params, int fork_count, philo_t *ph_arr);
 long long	ft_uint_atoi(char *str);
+
+unsigned int	ft_time_delta(philo_t *philo_struct);
+unsigned int	ft_last_lunch_delta(philo_t *philo_struct);
+void	ft_take_forks(philo_t *philo_struct);
+void	ft_eat(philo_t *philo_struct);
+void	ft_sleep(philo_t *philo_struct);
+void	ft_think(philo_t *philo_struct);
 
 
 #endif

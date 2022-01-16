@@ -1,5 +1,5 @@
 
-#include "../philo.h"
+#include "../srcs/philo.h"
 #include "stdio.h"
 #include "unistd.h"
 #define NUM_OF_TREADS 10000

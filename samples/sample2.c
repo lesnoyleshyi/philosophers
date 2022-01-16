@@ -1,5 +1,5 @@
 
-#include "../philo.h"
+#include "../srcs/philo.h"
 #include "stdio.h"
 #include "string.h"
 #define SUCCESS 0
