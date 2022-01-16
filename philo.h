@@ -27,20 +27,27 @@ typedef struct data
 	long long		sleep_t;
 	long long		lunches;
 	pthread_mutex_t	*printer;
+	pthread_mutex_t	*boil;
+	pthread_mutex_t	*forks;
 	struct timeval	start_time;
 }			t_data;
 
 typedef struct philosopher
 {
-	int			id;
-	pthread_t	dude;
-	t_data		*data;
+	int				id;
+	pthread_t		dude;
+	t_data			*data;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
 }				philo_t;
 
 
 int			ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[]);
+int			ft_create_philosophers(philo_t **ph_arr, t_data *data, int ph_count);
+int			ft_read_argv(t_data *params, char *argv[]);
 void		ft_get_start_time(t_data *data_struct);
-int			ft_create_mutexes(t_data *params);
+int			ft_create_mutexes(t_data *params, philo_t *ph_arr, int fork_count);
+int			ft_provide_forks(t_data *params, int fork_count, philo_t *ph_arr);
 long long	ft_uint_atoi(char *str);
 
 

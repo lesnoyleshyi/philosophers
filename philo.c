@@ -52,55 +52,17 @@ int	main(int argc, char *argv[])
 
 int	ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[])
 {
-	int	philo_count;
-
 	if (argc > 6 || argc < 5)
 		return (1);
-	philo_count = ft_uint_atoi(argv[1]);
-	params->philo_count = philo_count;
-	params->fork_count = philo_count;
-	params->die_t = ft_uint_atoi(argv[2]);
-	params->eat_t = ft_uint_atoi(argv[3]);
-	params->sleep_t = ft_uint_atoi(argv[4]);
-	params->lunches = ft_uint_atoi(argv[5]);
-	*ph_arr = (philo_t *)malloc(sizeof(philo_t ) * philo_count);
- 	if (philo_count == -1 || params->die_t == -1 || params->eat_t == -1
-		|| params->sleep_t == -1 || params->lunches == -1)
- 		return (1);
-	if (*ph_arr == NULL)
+	if (ft_read_argv(params, argv) == 1)
 		return (1);
-	while (philo_count--)
-	{
-		(*ph_arr)[philo_count].id = philo_count + 1;
-		(*ph_arr)[philo_count].data = params;
-	}
-	if (ft_create_mutexes(params) == 1)
+	if (ft_create_philosophers(ph_arr, params, params->philo_count) == 1)
+		return (1);
+	if (ft_create_mutexes(params, *ph_arr, params->fork_count) == 1)
 		return (1);
 	return (0);
 }
 
-long long	ft_uint_atoi(char *str)
-{
-	unsigned long long	res;
-
-	res = 0;
-	if (!str)
-		return (0);
-	while ((*str > 8 && *str < 14) || *str == 32)
-		str++;
-	if (*str == '-')
-		return (-1);
-	if (*str == '+')
-		str++;
-	while (*str >= '0' && *str <= '9')
-	{
-		res = res * 10 + (*str - '0');
-		str++;
-	}
-	if (res > 9223372036854775807)
-		return(-1);
-	return ((long long)res);
-}
 
 void	*simulation(void *params)
 {
@@ -110,13 +72,69 @@ void	*simulation(void *params)
 	dudes_struct = (philo_t *)params;
 	ft_get_start_time(dudes_struct->data);
 //	ft_eat(data);
-	gettimeofday(&now, NULL);
-	pthread_mutex_lock(dudes_struct->data->printer);
-	printf("%ld.%d\t%d\tphilosopher sends hello\n",
-		   now.tv_sec - dudes_struct->data->start_time.tv_sec,
-		   now.tv_usec - dudes_struct->data->start_time.tv_usec,
-		   dudes_struct->id);
-	pthread_mutex_unlock(dudes_struct->data->printer);
+	while (1)
+	{
+		if (dudes_struct->id % 2 == 0)
+		{
+			pthread_mutex_lock(dudes_struct->r_fork);
+			gettimeofday(&now, NULL);
+			printf("%ld.%d\t%d\thas taken right fork\n",
+				   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+				   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+				   dudes_struct->id);
+			pthread_mutex_lock(dudes_struct->l_fork);
+			gettimeofday(&now, NULL);
+			printf("%ld.%d\t%d\thas taken left fork\n",
+				   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+				   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+				   dudes_struct->id);
+		}
+		else
+		{
+			pthread_mutex_lock(dudes_struct->l_fork);
+			gettimeofday(&now, NULL);
+			printf("%ld.%d\t%d\thas taken left fork\n",
+				   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+				   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+				   dudes_struct->id);
+			pthread_mutex_lock(dudes_struct->r_fork);
+			gettimeofday(&now, NULL);
+			printf("%ld.%d\t%d\thas taken right fork\n",
+				   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+				   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+				   dudes_struct->id);
+		}
+		pthread_mutex_lock(dudes_struct->data->boil);
+		gettimeofday(&now, NULL);
+		printf("%ld.%d\t%d\tis eating\n",
+			   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+			   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+			   dudes_struct->id);
+		usleep(dudes_struct->data->eat_t * 1000);
+		pthread_mutex_unlock(dudes_struct->data->boil);
+		pthread_mutex_unlock(dudes_struct->r_fork);
+		pthread_mutex_unlock(dudes_struct->l_fork);
+		gettimeofday(&now, NULL);
+		printf("%ld.%d\t%d\tis sleeping\n",
+			   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+			   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+			   dudes_struct->id);
+		usleep(dudes_struct->data->sleep_t * 1000);
+		gettimeofday(&now, NULL);
+		printf("%ld.%d\t%d\tis thinking\n",
+			   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+			   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+			   dudes_struct->id);
+		gettimeofday(&now, NULL);
+		if (now.tv_sec - dudes_struct->data->start_time.tv_sec > dudes_struct->data->die_t)
+		{
+			printf("%ld.%d\t%d\tdied\n",
+				   now.tv_sec - dudes_struct->data->start_time.tv_sec,
+				   now.tv_usec - dudes_struct->data->start_time.tv_usec,
+				   dudes_struct->id);
+			break;
+		}
+	}
 	return (0);
 }
 
@@ -126,21 +144,6 @@ void	*simulation(void *params)
 //	ft_take_forks();
 //	ft_eat();
 //}
-
-int	ft_create_mutexes(t_data *params)
-{
-	pthread_mutex_t	*printer;
-	int				ret;
-
-	printer = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	if (!printer)
-		return (1);
-	params->printer = printer;
-	ret = pthread_mutex_init(printer, NULL);
-	if (ret != 0)
-		return (1);
-	return (0);
-}
 
 void	ft_get_start_time(t_data *data_struct)
 {
