@@ -12,6 +12,43 @@
 
 #include "philo.h"
 
+long long	ft_uint_atoi(char *str)
+{
+	unsigned long long	res;
+
+	res = 0;
+	if (!str)
+		return (0);
+	while ((*str > 8 && *str < 14) || *str == 32)
+		str++;
+	if (*str == '-')
+		return (-1);
+	if (*str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+	{
+		res = res * 10 + (*str - '0');
+		str++;
+	}
+	if (res > 9223372036854775807)
+		return (-1);
+	return ((long long)res);
+}
+
+unsigned int	ft_time_delta(t_philo *philo_struct)
+{
+	struct timeval	now;
+	long long		now_ms;
+	long long		start_ms;
+
+	gettimeofday(&now, NULL);
+	start_ms = philo_struct->data->start_time.tv_sec * 1000
+			   + philo_struct->data->start_time.tv_usec / 1000;
+	now_ms = now.tv_sec * 1000
+			 + now.tv_usec / 1000;
+	return ((unsigned int)(now_ms - start_ms));
+}
+
 void	ft_precise_sleep(unsigned int milliseconds)
 {
 	struct timeval	start;
@@ -21,9 +58,16 @@ void	ft_precise_sleep(unsigned int milliseconds)
 	while (1)
 	{
 		gettimeofday(&now, NULL);
-		if ((now.tv_sec * 1000 + now.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000) > milliseconds)
+		if ((now.tv_sec * 1000 + now.tv_usec / 1000)
+			- (start.tv_sec * 1000 + start.tv_usec / 1000) >= milliseconds)
 			return ;
 		else
-			usleep(10);
+			usleep(500);
 	}
+}
+
+void	ft_get_start_time(t_data *data_struct)
+{
+	if (data_struct->start_time.tv_sec == 0)
+		gettimeofday(&(data_struct->start_time), NULL);
 }

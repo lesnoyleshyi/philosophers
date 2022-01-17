@@ -12,18 +12,11 @@
 
 #include "philo.h"
 
-unsigned int	ft_time_delta(philo_t *philo_struct);
-unsigned int	ft_last_lunch_delta(philo_t *philo_struct);
-void	ft_take_forks(philo_t *philo_struct);
-void	ft_eat(philo_t *philo_struct);
-void	ft_sleep(philo_t *philo_struct);
-void	ft_think(philo_t *philo_struct);
-
 void	*simulation(void *params)
 {
-	philo_t			*philo_struct;
+	t_philo			*philo_struct;
 
-	philo_struct = (philo_t *)params;
+	philo_struct = (t_philo *)params;
 	while (1)
 	{
 		ft_take_forks(philo_struct);
@@ -33,77 +26,47 @@ void	*simulation(void *params)
 	}
 }
 
-
-unsigned int	ft_time_delta(philo_t *philo_struct)
-{
-	long long	now_ms;
-	long long	start_ms;
-
-	gettimeofday(&philo_struct->now, NULL);
-	start_ms = philo_struct->data->start_time.tv_sec * 1000
-			+ philo_struct->data->start_time.tv_usec / 1000;
-	now_ms = philo_struct->now.tv_sec * 1000
-			+ philo_struct->now.tv_usec / 1000;
-	return ((unsigned int)(now_ms - start_ms));
-}
-
-unsigned int	ft_last_lunch_delta(philo_t *philo_struct)
-{
-	long long	now_ms;
-	long long	last_lunch_ms;
-
-	gettimeofday(&philo_struct->now, NULL);
-	last_lunch_ms = philo_struct->last_lunch.tv_sec * 1000
-			+ philo_struct->last_lunch.tv_usec / 1000;
-	now_ms = philo_struct->now.tv_sec * 1000
-			+ philo_struct->now.tv_usec / 1000;
-	return ((unsigned int)(now_ms - last_lunch_ms));
-}
-
-void	ft_eat(philo_t *philo_struct)
-{
-//	pthread_mutex_lock(philo_struct->data->boil);
-	philo_struct->lunch_count += 1;
-//	gettimeofday(&philo_struct->now, NULL);
-	printf("%d %d is eating\n", ft_time_delta(philo_struct), philo_struct->id);
-	ft_precise_sleep(philo_struct->data->eat_t);
-	gettimeofday(&philo_struct->last_lunch, NULL);
-//	pthread_mutex_unlock(philo_struct->data->boil);
-	pthread_mutex_unlock(philo_struct->r_fork);
-	pthread_mutex_unlock(philo_struct->l_fork);
-}
-
-void	ft_sleep(philo_t *philo_struct)
-{
-//	gettimeofday(&philo_struct->now, NULL);
-	printf("%d %d is sleeping\n", ft_time_delta(philo_struct), philo_struct->id);
-	ft_precise_sleep(philo_struct->data->sleep_t);
-}
-
-void	ft_take_forks(philo_t *philo_struct)
+void	ft_take_forks(t_philo *philo_struct)
 {
 	if (philo_struct->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo_struct->r_fork);
-//		gettimeofday(&philo_struct->now, NULL);
-		printf("%u %d has taken a fork\n", ft_time_delta(philo_struct), philo_struct->id);
+		printf("%u %d has taken a fork\n",
+			   ft_time_delta(philo_struct), philo_struct->id);
 		pthread_mutex_lock(philo_struct->l_fork);
-//		gettimeofday(&philo_struct->now, NULL);
-		printf("%u %d has taken a fork\n", ft_time_delta(philo_struct), philo_struct->id);
+		printf("%u %d has taken a fork\n",
+			   ft_time_delta(philo_struct), philo_struct->id);
 	}
 	else
 	{
 		pthread_mutex_lock(philo_struct->l_fork);
-//		gettimeofday(&philo_struct->now, NULL);
-		printf("%d %d has taken a fork\n", ft_time_delta(philo_struct), philo_struct->id);
+		printf("%d %d has taken a fork\n",
+			   ft_time_delta(philo_struct), philo_struct->id);
 		pthread_mutex_lock(philo_struct->r_fork);
-//		gettimeofday(&philo_struct->now, NULL);
-		printf("%d %d has taken a fork\n", ft_time_delta(philo_struct), philo_struct->id);
+		printf("%d %d has taken a fork\n",
+			   ft_time_delta(philo_struct), philo_struct->id);
 	}
 }
 
-void	ft_think(philo_t *philo_struct)
+void	ft_eat(t_philo *philo_struct)
 {
-//	gettimeofday(&philo_struct->now, NULL);
-	printf("%d %d is thinking\n", ft_time_delta(philo_struct), philo_struct->id);
+	philo_struct->lunch_count += 1;
+	gettimeofday(&philo_struct->last_lunch, NULL);
+	printf("%d %d is eating\n", ft_time_delta(philo_struct), philo_struct->id);
+	ft_precise_sleep(philo_struct->data->eat_t);
+	pthread_mutex_unlock(philo_struct->r_fork);
+	pthread_mutex_unlock(philo_struct->l_fork);
+}
+
+void	ft_sleep(t_philo *philo_struct)
+{
+	printf("%d %d is sleeping\n",
+		ft_time_delta(philo_struct), philo_struct->id);
+	ft_precise_sleep(philo_struct->data->sleep_t);
+}
+
+void	ft_think(t_philo *philo_struct)
+{
+	printf("%d %d is thinking\n",
+		ft_time_delta(philo_struct), philo_struct->id);
 }

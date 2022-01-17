@@ -12,7 +12,20 @@
 
 #include "philo.h"
 
-int		ft_read_argv(t_data *params, char *argv[])
+int	ft_get_arguments(t_data *params, t_philo **ph_arr, int argc, char *argv[])
+{
+	if (argc > 6 || argc < 5)
+		return (1);
+	if (ft_read_argv(params, argv) == 1)
+		return (1);
+	if (ft_create_philosophers(ph_arr, params, params->philo_count) == 1)
+		return (1);
+	if (ft_create_mutexes(params, *ph_arr, params->fork_count) == 1)
+		return (1);
+	return (0);
+}
+
+int	ft_read_argv(t_data *params, char *argv[])
 {
 	int	philo_count;
 
@@ -29,32 +42,9 @@ int		ft_read_argv(t_data *params, char *argv[])
 	return (0);
 }
 
-long long	ft_uint_atoi(char *str)
+int	ft_create_philosophers(t_philo **ph_arr, t_data *data, int ph_count)
 {
-	unsigned long long	res;
-
-	res = 0;
-	if (!str)
-		return (0);
-	while ((*str > 8 && *str < 14) || *str == 32)
-		str++;
-	if (*str == '-')
-		return (-1);
-	if (*str == '+')
-		str++;
-	while (*str >= '0' && *str <= '9')
-	{
-		res = res * 10 + (*str - '0');
-		str++;
-	}
-	if (res > 9223372036854775807)
-		return(-1);
-	return ((long long)res);
-}
-
-int		ft_create_philosophers(philo_t **ph_arr, t_data *data, int ph_count)
-{
-	*ph_arr = (philo_t *)malloc(sizeof(philo_t) * ph_count);
+	*ph_arr = (t_philo *)malloc(sizeof(t_philo) * ph_count);
 	if (*ph_arr == NULL)
 		return (1);
 	while (ph_count--)
@@ -63,37 +53,32 @@ int		ft_create_philosophers(philo_t **ph_arr, t_data *data, int ph_count)
 		(*ph_arr)[ph_count].data = data;
 		(*ph_arr)[ph_count].lunch_count = 0;
 		(*ph_arr)[ph_count].last_lunch.tv_sec = 0;
+		(*ph_arr)[ph_count].last_lunch.tv_usec = 0;
 	}
 	return (0);
 }
 
-int	ft_create_mutexes(t_data *params, philo_t *ph_arr, int fork_count)
+int	ft_create_mutexes(t_data *params, t_philo *ph_arr, int fork_count)
 {
 	pthread_mutex_t	*printer;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	*boil;
 	int				ret;
 
 	printer = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	forks = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * fork_count);
-	boil = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	if (!printer || !forks || !boil)
+	if (!printer || !forks)
 		return (1);
 	params->printer = printer;
 	params->forks = forks;
-	params->boil = boil;
 	ret = pthread_mutex_init(printer, NULL);
 	if (ret != 0)
 		return (1);
 	if (ft_provide_forks(params, params->fork_count, ph_arr) == 1)
 		return (1);
-	ret = pthread_mutex_init(boil, NULL);
-	if (ret != 0)
-		return (1);
 	return (0);
 }
 
-int		ft_provide_forks(t_data *params, int fork_count, philo_t *ph_arr)
+int	ft_provide_forks(t_data *params, int fork_count, t_philo *ph_arr)
 {
 	int	ret;
 	int	i;

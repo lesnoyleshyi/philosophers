@@ -27,7 +27,6 @@ typedef struct data
 	long long		sleep_t;
 	long long		lunches;
 	pthread_mutex_t	*printer;
-	pthread_mutex_t	*boil;
 	pthread_mutex_t	*forks;
 	struct timeval	start_time;
 }			t_data;
@@ -38,29 +37,26 @@ typedef struct philosopher
 	int				lunch_count;
 	pthread_t		dude;
 	t_data			*data;
-	struct timeval	now;
 	struct timeval	last_lunch;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
-}				philo_t;
+}				t_philo;
 
+int				ft_get_arguments(t_data *fu, t_philo **ck, int nor, char **me);
+int				ft_create_philosophers(t_philo **fuck, t_data *no, int me);
+int				ft_read_argv(t_data *params, char *argv[]);
+int				ft_create_mutexes(t_data *fuck, t_philo *nor, int me);
+int				ft_provide_forks(t_data *fuck, int nor, t_philo *me);
 
-int			ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[]);
-int			ft_create_philosophers(philo_t **ph_arr, t_data *data, int ph_count);
-int			ft_read_argv(t_data *params, char *argv[]);
-void		ft_get_start_time(t_data *data_struct);
-int			ft_create_mutexes(t_data *params, philo_t *ph_arr, int fork_count);
-int			ft_provide_forks(t_data *params, int fork_count, philo_t *ph_arr);
-long long	ft_uint_atoi(char *str);
+long long		ft_uint_atoi(char *str);
+void			ft_get_start_time(t_data *data_struct);
+void			ft_precise_sleep(unsigned int milliseconds);
+unsigned int	ft_time_delta(t_philo *philo_struct);
+unsigned int	ft_last_lunch_delta(t_philo *philo_struct);
 
-unsigned int	ft_time_delta(philo_t *philo_struct);
-unsigned int	ft_last_lunch_delta(philo_t *philo_struct);
-void	ft_take_forks(philo_t *philo_struct);
-void	ft_eat(philo_t *philo_struct);
-void	ft_sleep(philo_t *philo_struct);
-void	ft_think(philo_t *philo_struct);
-
-void	ft_precise_sleep(unsigned int milliseconds);
-
+void			ft_take_forks(t_philo *philo_struct);
+void			ft_eat(t_philo *philo_struct);
+void			ft_sleep(t_philo *philo_struct);
+void			ft_think(t_philo *philo_struct);
 
 #endif

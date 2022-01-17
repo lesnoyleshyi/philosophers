@@ -18,7 +18,7 @@ void	*ft_watch(void *ph_array);
 int	main(int argc, char *argv[])
 {
 	pthread_t	watcher;
-	philo_t		*ph_arr;
+	t_philo		*ph_arr;
 	t_data 		params;
 	int			i;
 	int			ret;
@@ -59,54 +59,4 @@ int	main(int argc, char *argv[])
 		}
 	}
 	return (0);
-}
-
-int	ft_get_arguments(t_data *params, philo_t **ph_arr, int argc, char *argv[])
-{
-	if (argc > 6 || argc < 5)
-		return (1);
-	if (ft_read_argv(params, argv) == 1)
-		return (1);
-	if (ft_create_philosophers(ph_arr, params, params->philo_count) == 1)
-		return (1);
-	if (ft_create_mutexes(params, *ph_arr, params->fork_count) == 1)
-		return (1);
-	return (0);
-}
-
-void	ft_get_start_time(t_data *data_struct)
-{
-	if (data_struct->start_time.tv_sec == 0)
-		gettimeofday(&(data_struct->start_time), NULL);
-}
-
-void	*ft_watch(void *ph_array)
-{
-	philo_t			*ph_arr;
-	t_data			*data;
-	int				i;
-	struct timeval	now;
-
-	ph_arr = (philo_t *) ph_array;
-	data = (ph_arr[0].data);
-	usleep(data->die_t * 1000);
-	while (1)
-	{
-		i = -1;
-		while (++i < data->philo_count)
-		{
-//			printf("check philo №%d\n", i + 1);
-			gettimeofday(&now, NULL);
-//			printf("Last lunch time is %lu\n", ph_arr[i].last_lunch.tv_sec * 1000 + ph_arr[i].last_lunch.tv_usec / 1000);
-//			printf("Is eating: %d\n", ph_arr[i].is_eating);
-//			printf("die_time in ms: %lld\n", data->die_t);
-			if (!ph_arr[i].lunch_count && ((now.tv_sec * 1000 + now.tv_usec / 1000) - (ph_arr[i].last_lunch.tv_sec * 1000 + ph_arr[i].last_lunch.tv_usec / 1000) > data->die_t))
-			{
-				pthread_mutex_lock(data->printer);
-				printf("%lu %d died\n", (now.tv_sec * 1000 + now.tv_usec / 1000)
-				- (ph_arr[i].data->start_time.tv_sec * 1000 + ph_arr[i].data->start_time.tv_usec / 1000), i + 1);
-				return (NULL);
-			}
-		}
-	}
 }
