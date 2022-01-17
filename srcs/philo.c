@@ -28,10 +28,10 @@ int	main(int argc, char *argv[])
 		printf("Error in parsing params\n");
 		return (1);
 	}
-	else
-	{
-		printf("parsing params ok\n");
-	}
+//	else
+//	{
+//		printf("parsing params ok\n");
+//	}
 	i = -1;
 	ft_get_start_time(&params);
 	while (++i < params.philo_count)
@@ -89,24 +89,24 @@ void	*ft_watch(void *ph_array)
 
 	ph_arr = (philo_t *) ph_array;
 	data = (ph_arr[0].data);
-	usleep(data->die_t * 1000 + 100);
+	usleep(data->die_t * 1000);
 	while (1)
 	{
 		i = -1;
 		while (++i < data->philo_count)
 		{
-			printf("check %d philo\n", i + 1);
+//			printf("check philo №%d\n", i + 1);
 			gettimeofday(&now, NULL);
-			if ((now.tv_sec * 1000 + now.tv_usec / 1000)
-			- (ph_arr[i].last_lunch.tv_sec * 1000 + ph_arr[i].last_lunch.tv_usec / 1000) > data->die_t)
+//			printf("Last lunch time is %lu\n", ph_arr[i].last_lunch.tv_sec * 1000 + ph_arr[i].last_lunch.tv_usec / 1000);
+//			printf("Is eating: %d\n", ph_arr[i].is_eating);
+//			printf("die_time in ms: %lld\n", data->die_t);
+			if (!ph_arr[i].lunch_count && ((now.tv_sec * 1000 + now.tv_usec / 1000) - (ph_arr[i].last_lunch.tv_sec * 1000 + ph_arr[i].last_lunch.tv_usec / 1000) > data->die_t))
 			{
 				pthread_mutex_lock(data->printer);
 				printf("%lu %d died\n", (now.tv_sec * 1000 + now.tv_usec / 1000)
 				- (ph_arr[i].data->start_time.tv_sec * 1000 + ph_arr[i].data->start_time.tv_usec / 1000), i + 1);
 				return (NULL);
 			}
-			else
-				printf("works\n");
 		}
 	}
 }

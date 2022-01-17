@@ -35,6 +35,7 @@ typedef struct data
 typedef struct philosopher
 {
 	int				id;
+	int				lunch_count;
 	pthread_t		dude;
 	t_data			*data;
 	struct timeval	now;
@@ -58,6 +59,8 @@ void	ft_take_forks(philo_t *philo_struct);
 void	ft_eat(philo_t *philo_struct);
 void	ft_sleep(philo_t *philo_struct);
 void	ft_think(philo_t *philo_struct);
+
+void	ft_precise_sleep(unsigned int milliseconds);
 
 
 #endif

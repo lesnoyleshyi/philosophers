@@ -3,7 +3,7 @@ NAME	=	philo
 
 HEADER	=	${SRC_DIR}/philo.h
 
-SRC_F	=	philo.c	get_arguments_funcs.c	simulation_funcs.c
+SRC_F	=	philo.c	get_arguments_funcs.c	simulation_funcs.c	philo_utils.c \
 
 SRC_DIR	=	./srcs
 
