@@ -19,9 +19,16 @@ void	*simulation(void *params)
 	philo_struct = (t_philo *)params;
 	while (1)
 	{
+		if (philo_struct->data->lunches == 0)
+			return (NULL);
 		ft_take_forks(philo_struct);
 		ft_eat(philo_struct);
 		ft_sleep(philo_struct);
+		if (philo_struct->data->lunches != -1488
+			&& philo_struct->lunch_count >= philo_struct->data->lunches)
+		{
+			return (NULL);
+		}
 		ft_think(philo_struct);
 	}
 }
@@ -32,19 +39,19 @@ void	ft_take_forks(t_philo *philo_struct)
 	{
 		pthread_mutex_lock(philo_struct->r_fork);
 		printf("%u %d has taken a fork\n",
-			   ft_time_delta(philo_struct), philo_struct->id);
+			ft_time_delta(philo_struct), philo_struct->id);
 		pthread_mutex_lock(philo_struct->l_fork);
 		printf("%u %d has taken a fork\n",
-			   ft_time_delta(philo_struct), philo_struct->id);
+			ft_time_delta(philo_struct), philo_struct->id);
 	}
 	else
 	{
 		pthread_mutex_lock(philo_struct->l_fork);
 		printf("%d %d has taken a fork\n",
-			   ft_time_delta(philo_struct), philo_struct->id);
+			ft_time_delta(philo_struct), philo_struct->id);
 		pthread_mutex_lock(philo_struct->r_fork);
 		printf("%d %d has taken a fork\n",
-			   ft_time_delta(philo_struct), philo_struct->id);
+			ft_time_delta(philo_struct), philo_struct->id);
 	}
 }
 
@@ -52,8 +59,10 @@ void	ft_eat(t_philo *philo_struct)
 {
 	philo_struct->lunch_count += 1;
 	gettimeofday(&philo_struct->last_lunch, NULL);
-	printf("%d %d is eating\n", ft_time_delta(philo_struct), philo_struct->id);
+	printf("%d %d is eating\n",
+		ft_time_delta(philo_struct), philo_struct->id);
 	ft_precise_sleep(philo_struct->data->eat_t);
+
 	pthread_mutex_unlock(philo_struct->r_fork);
 	pthread_mutex_unlock(philo_struct->l_fork);
 }

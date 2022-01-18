@@ -12,9 +12,6 @@
 
 #include "philo.h"
 
-void	*simulation(void *params);
-void	*ft_watch(void *ph_array);
-
 int	main(int argc, char *argv[])
 {
 	pthread_t	watcher;
@@ -51,7 +48,7 @@ int	main(int argc, char *argv[])
 	while (++i < params.philo_count)
 	{
 		ret = pthread_join(ph_arr[i].dude, NULL);
-//		printf("Thread №%d has been joined!\n", i + 1);
+		printf("Thread №%d has been joined!\n", i + 1);
 		if (ret != 0)
 		{
 			printf("Error joining threads\n");

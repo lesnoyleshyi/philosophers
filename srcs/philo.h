@@ -59,4 +59,9 @@ void			ft_eat(t_philo *philo_struct);
 void			ft_sleep(t_philo *philo_struct);
 void			ft_think(t_philo *philo_struct);
 
+void			*simulation(void *params);
+void			*ft_watch(void *ph_array);
+int				ft_maybe_thats_all(t_philo *ph_arr);
+unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct);
+
 #endif

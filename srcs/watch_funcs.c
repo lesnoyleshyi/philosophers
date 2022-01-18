@@ -12,13 +12,12 @@
 
 #include "philo.h"
 
-unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct);
-
 void	*ft_watch(void *ph_array)
 {
 	t_philo			*ph_arr;
 	t_data			*data;
 	int				i;
+
 	unsigned int	death_delta;
 	struct timeval	time;
 	struct timeval	time_bef;
@@ -34,8 +33,7 @@ void	*ft_watch(void *ph_array)
 			gettimeofday(&time_bef, NULL);
 			death_delta = ft_last_lunch_time_delta(&ph_arr[i]);
 			gettimeofday(&time, NULL);
-//			printf("%u - death delta\n", death_delta);
-			if (death_delta > data->die_t)
+			if (ph_arr[i].lunch_count < data->lunches && death_delta > data->die_t)
 			{
 				pthread_mutex_lock(data->printer);
 				printf("%u %d died\n", ft_time_delta(&ph_arr[i]) , i + 1);
@@ -45,10 +43,11 @@ void	*ft_watch(void *ph_array)
 				printf("now: 			%ld:%d\n", time.tv_sec, time.tv_usec);
 				printf("last lunch	time:	%ld:%d\n", ph_arr[i].last_lunch.tv_sec, ph_arr[i].last_lunch.tv_usec);
 				printf("start 		time:	%ld:%d\n", ph_arr[i].data->start_time.tv_sec, ph_arr[i].data->start_time.tv_usec);
-				printf("real delta: 		%ld\n", ph_arr[i].data->start_time.tv_sec - ph_arr[i].data->start_time.tv_usec);
 				return (NULL);
 			}
 		}
+		if (ft_maybe_thats_all(ph_arr) == 0)
+			return (NULL);
 	}
 }
 
@@ -57,15 +56,13 @@ unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct)
 	struct timeval	now;
 	long long		now_mcs;
 	long long		last_lunch_mcs;
-//	long			sec_delta;
-//	unsigned int	usec_delta;
 
 	gettimeofday(&now, NULL);
 	if (philo_struct->last_lunch.tv_sec == now.tv_sec
 	&& philo_struct->last_lunch.tv_usec == now.tv_usec)
 	{
-		printf("№%d same time starts eat and being checked!\n", philo_struct->id);
-		printf("ts: %ld:%d\n", now.tv_sec, now.tv_usec);
+//		printf("№%d same time starts eat and being checked!\n", philo_struct->id);
+//		printf("ts: %ld:%d\n", now.tv_sec, now.tv_usec);
 		return (0);
 	}
 	last_lunch_mcs = philo_struct->last_lunch.tv_sec * 1000000
@@ -76,10 +73,31 @@ unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct)
 		return (0);
 	else
 		return ((now_mcs - last_lunch_mcs) / 1000);
-//	return ((unsigned int)(now_ms - last_lunch_ms));
-//	if (philo_struct->last_lunch.tv_sec >= now.tv_sec)
-//		sec_delta = philo_struct->last_lunch.tv_sec - now.tv_sec;
-//	else
-//		sec_delta = now.tv_sec - philo_struct->last_lunch.tv_sec;
-//	if ()
+}
+
+int	ft_maybe_thats_all(t_philo *ph_arr)
+{
+	int i;
+	int	philo_count;
+	int	finished_eating_count;
+
+	if (ph_arr[0].data->lunches == 0)
+		return (0);
+	if (ph_arr[0].data->lunches == -1488)
+		return (1);
+	finished_eating_count = 0;
+	philo_count = ph_arr[0].data->philo_count;
+	i = 0;
+	while (i < philo_count)
+	{
+		if (ph_arr[i].lunch_count >= ph_arr[0].data->lunches)
+			finished_eating_count += 1;
+		i++;
+	}
+	if (finished_eating_count == philo_count)
+	{
+		ft_precise_sleep(ph_arr[0].data->eat_t);
+		return (0);
+	}
+	return (1);
 }

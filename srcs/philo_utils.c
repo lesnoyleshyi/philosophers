@@ -18,7 +18,7 @@ long long	ft_uint_atoi(char *str)
 
 	res = 0;
 	if (!str)
-		return (0);
+		return (-1488);
 	while ((*str > 8 && *str < 14) || *str == 32)
 		str++;
 	if (*str == '-')
@@ -42,11 +42,11 @@ unsigned int	ft_time_delta(t_philo *philo_struct)
 	long long		start_ms;
 
 	gettimeofday(&now, NULL);
-	start_ms = philo_struct->data->start_time.tv_sec * 1000
-			   + philo_struct->data->start_time.tv_usec / 1000;
-	now_ms = now.tv_sec * 1000
-			 + now.tv_usec / 1000;
-	return ((unsigned int)(now_ms - start_ms));
+	start_ms = philo_struct->data->start_time.tv_sec * 1000000
+			   + philo_struct->data->start_time.tv_usec;
+	now_ms = now.tv_sec * 1000000
+			 + now.tv_usec;
+	return ((unsigned int)(now_ms - start_ms) / 1000);
 }
 
 void	ft_precise_sleep(unsigned int milliseconds)
