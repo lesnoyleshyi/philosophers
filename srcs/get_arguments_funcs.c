@@ -56,8 +56,7 @@ int	ft_create_philosophers(t_philo **ph_arr, t_data *data, int ph_count)
 		(*ph_arr)[ph_count].id = ph_count + 1;
 		(*ph_arr)[ph_count].data = data;
 		(*ph_arr)[ph_count].lunch_count = 0;
-		(*ph_arr)[ph_count].last_lunch.tv_sec = 0;
-		(*ph_arr)[ph_count].last_lunch.tv_usec = 0;
+		(*ph_arr)[ph_count].last_lunch = 0;
 	}
 	return (0);
 }

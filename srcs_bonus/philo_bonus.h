@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stycho <stycho@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 13:16:25 by stycho            #+#    #+#             */
-/*   Updated: 2022/01/13 13:16:26 by stycho           ###   ########.fr       */
+/*   Updated: 2022/01/18 19:47:02 by stycho           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 # include <pthread.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -42,27 +42,6 @@ typedef struct philosopher
 	pthread_mutex_t	*l_fork;
 }				t_philo;
 
-int				ft_get_arguments(t_data *fu, t_philo **ck, int nor, char **me);
-int				ft_create_philosophers(t_philo **fuck, t_data *no, int me);
-int				ft_read_argv(t_data *params, char *argv[]);
-int				ft_create_mutexes(t_data *fuck, t_philo *nor, int me);
-int				ft_provide_forks(t_data *fuck, int nor, t_philo *me);
 
-long long		ft_uint_atoi(char *str);
-void			ft_get_start_time(t_data *data_struct);
-void			ft_precise_sleep(unsigned int milliseconds);
-long long		ft_ms_from_start(t_philo *philo_struct);
-unsigned int	ft_last_lunch_delta(t_philo *philo_struct);
-
-void			ft_take_forks(t_philo *philo_struct);
-void			ft_eat(t_philo *philo_struct);
-void			ft_sleep(t_philo *philo_struct);
-void			ft_think(t_philo *philo_struct);
-
-void			*simulation(void *params);
-void			*ft_watch(void *ph_array);
-int				ft_maybe_thats_all(t_philo *ph_arr);
-//unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct);
-int				ft_perror_and_return(char *error_message, int ret_val);
 
 #endif

@@ -35,20 +35,18 @@ long long	ft_uint_atoi(char *str)
 	return ((long long)res);
 }
 
-unsigned int	ft_time_delta(t_philo *philo_struct)
+long long	ft_ms_from_start(t_philo *philo_struct)
 {
 	struct timeval	now;
-	long long		now_mcs;
-	long long		start_mcs;
-	long long		res_ms;
+	long long		now_ms;
+	long long		start_ms;
 
 	gettimeofday(&now, NULL);
-	start_mcs = philo_struct->data->start_time.tv_sec * 1000000
-		+ philo_struct->data->start_time.tv_usec;
-	now_mcs = now.tv_sec * 1000000
-		+ now.tv_usec;
-	res_ms = (now_mcs - start_mcs) / 1000;
-	return (res_ms);
+	start_ms = philo_struct->data->start_time.tv_sec * 1000
+		+ philo_struct->data->start_time.tv_usec / 1000;
+	now_ms = now.tv_sec * 1000
+		+ now.tv_usec / 1000;
+	return (now_ms - start_ms);
 }
 
 void	ft_precise_sleep(unsigned int milliseconds)

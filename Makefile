@@ -1,28 +1,43 @@
 
 NAME	=	philo
 
-HEADER	=	${SRC_DIR}/philo.h
+B_NAME	=	philo_bonus
+
+HEADER	=	philo.h
+
+B_HEADER =	philo_bonus.h
 
 SRC_F	=	philo.c	get_arguments_funcs.c	simulation_funcs.c	philo_utils.c \
 			watch_funcs.c
 
+B_SRC_F	=	philo_bonus.c
+
 SRC_DIR	=	./srcs
+
+B_SRC_DIR =	./srcs_bonus
 
 SRCS	=	$(addprefix ${SRC_DIR}/,${SRC_F})
 
+B_SRCS	=	$(addprefix ${B_SRC_DIR}/,${B_SRC_F})
+
 OBJS	=	${SRCS:.c=.o}
+
+B_OBJS	=	${B_SRCS:.c=.o}
 
 CC		=	cc
 
 CFLAGS	=	-Wall -Werror -Wextra
 
-%.o			:	%.c ${HEADER}
+%.o			:	%.c ${SRC_DIR}/${HEADER}
 				${CC} ${CFLAGS} $< -c -o $@
 
 .PHONY		:	all re clean fclean debug run
 
 ${NAME}		:	${OBJS}
 				${CC} ${CFLAGS} ${OBJS} -o ${NAME}
+
+bonus		:
+				make all NAME=${B_NAME} OBJS=${B_OBJS}
 
 clean		:
 				rm -rf ${OBJS}
