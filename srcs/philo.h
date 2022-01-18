@@ -34,7 +34,7 @@ typedef struct data
 typedef struct philosopher
 {
 	int				id;
-	int				lunch_count;
+	long long		lunch_count;
 	pthread_t		dude;
 	t_data			*data;
 	struct timeval	last_lunch;
@@ -63,5 +63,6 @@ void			*simulation(void *params);
 void			*ft_watch(void *ph_array);
 int				ft_maybe_thats_all(t_philo *ph_arr);
 unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct);
+int				ft_perror_and_return(char *error_message, int ret_val);
 
 #endif

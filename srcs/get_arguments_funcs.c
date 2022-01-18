@@ -15,7 +15,7 @@
 int	ft_get_arguments(t_data *params, t_philo **ph_arr, int argc, char *argv[])
 {
 	if (argc > 6 || argc < 5)
-		return (1);
+		return (ft_perror_and_return("Wrong arguments count!", 1));
 	if (ft_read_argv(params, argv) == 1)
 		return (1);
 	if (ft_create_philosophers(ph_arr, params, params->philo_count) == 1)
@@ -38,7 +38,11 @@ int	ft_read_argv(t_data *params, char *argv[])
 	params->lunches = ft_uint_atoi(argv[5]);
 	if (philo_count == -1 || params->die_t == -1 || params->eat_t == -1
 		|| params->sleep_t == -1 || params->lunches == -1)
-		return (1);
+		return (ft_perror_and_return("Unsupported values in arguments", 1));
+	if (params->lunches == 0)
+		return (ft_perror_and_return("What does it mean 'eat 0 times?'", 1));
+	if (params->lunches == -2)
+		params->lunches = 9223372036854775807;
 	return (0);
 }
 
@@ -46,7 +50,7 @@ int	ft_create_philosophers(t_philo **ph_arr, t_data *data, int ph_count)
 {
 	*ph_arr = (t_philo *)malloc(sizeof(t_philo) * ph_count);
 	if (*ph_arr == NULL)
-		return (1);
+		return (ft_perror_and_return("Error allocating memory for philos", 1));
 	while (ph_count--)
 	{
 		(*ph_arr)[ph_count].id = ph_count + 1;
@@ -67,12 +71,12 @@ int	ft_create_mutexes(t_data *params, t_philo *ph_arr, int fork_count)
 	printer = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	forks = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * fork_count);
 	if (!printer || !forks)
-		return (1);
+		return (ft_perror_and_return("Err alloc mem for printer or forks", 1));
 	params->printer = printer;
 	params->forks = forks;
 	ret = pthread_mutex_init(printer, NULL);
 	if (ret != 0)
-		return (1);
+		return (ft_perror_and_return("Error initialising printer mutex", 1));
 	if (ft_provide_forks(params, params->fork_count, ph_arr) == 1)
 		return (1);
 	return (0);
@@ -88,7 +92,7 @@ int	ft_provide_forks(t_data *params, int fork_count, t_philo *ph_arr)
 	{
 		ret = pthread_mutex_init(&(params->forks[i]), NULL);
 		if (ret != 0)
-			return (1);
+			return (ft_perror_and_return("Error init mutex for forks", 1));
 	}
 	i = -1;
 	while (++i < fork_count)

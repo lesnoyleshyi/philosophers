@@ -17,20 +17,16 @@ void	*simulation(void *params)
 	t_philo			*philo_struct;
 
 	philo_struct = (t_philo *)params;
-	while (1)
+	while (philo_struct->lunch_count < philo_struct->data->lunches)
 	{
-		if (philo_struct->data->lunches == 0)
-			return (NULL);
 		ft_take_forks(philo_struct);
 		ft_eat(philo_struct);
 		ft_sleep(philo_struct);
-		if (philo_struct->data->lunches != -1488
-			&& philo_struct->lunch_count >= philo_struct->data->lunches)
-		{
+		if (philo_struct->lunch_count >= philo_struct->data->lunches)
 			return (NULL);
-		}
 		ft_think(philo_struct);
 	}
+	return (NULL);
 }
 
 void	ft_take_forks(t_philo *philo_struct)
@@ -62,7 +58,6 @@ void	ft_eat(t_philo *philo_struct)
 	printf("%d %d is eating\n",
 		ft_time_delta(philo_struct), philo_struct->id);
 	ft_precise_sleep(philo_struct->data->eat_t);
-
 	pthread_mutex_unlock(philo_struct->r_fork);
 	pthread_mutex_unlock(philo_struct->l_fork);
 }

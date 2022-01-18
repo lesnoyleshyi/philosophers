@@ -18,7 +18,7 @@ long long	ft_uint_atoi(char *str)
 
 	res = 0;
 	if (!str)
-		return (-1488);
+		return (-2);
 	while ((*str > 8 && *str < 14) || *str == 32)
 		str++;
 	if (*str == '-')
@@ -38,15 +38,17 @@ long long	ft_uint_atoi(char *str)
 unsigned int	ft_time_delta(t_philo *philo_struct)
 {
 	struct timeval	now;
-	long long		now_ms;
-	long long		start_ms;
+	long long		now_mcs;
+	long long		start_mcs;
+	long long		res_ms;
 
 	gettimeofday(&now, NULL);
-	start_ms = philo_struct->data->start_time.tv_sec * 1000000
-			   + philo_struct->data->start_time.tv_usec;
-	now_ms = now.tv_sec * 1000000
-			 + now.tv_usec;
-	return ((unsigned int)(now_ms - start_ms) / 1000);
+	start_mcs = philo_struct->data->start_time.tv_sec * 1000000
+		+ philo_struct->data->start_time.tv_usec;
+	now_mcs = now.tv_sec * 1000000
+		+ now.tv_usec;
+	res_ms = (now_mcs - start_mcs) / 1000;
+	return (res_ms);
 }
 
 void	ft_precise_sleep(unsigned int milliseconds)
@@ -70,4 +72,10 @@ void	ft_get_start_time(t_data *data_struct)
 {
 	if (data_struct->start_time.tv_sec == 0)
 		gettimeofday(&(data_struct->start_time), NULL);
+}
+
+int	ft_perror_and_return(char *error_message, int ret_val)
+{
+	printf("Programm failed with the next error message:\n%s\n", error_message);
+	return (ret_val);
 }
