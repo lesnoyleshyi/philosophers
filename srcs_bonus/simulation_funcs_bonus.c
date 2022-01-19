@@ -10,33 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-void	*simulation(void *params)
+void	ft_simulation(t_philo *philo_struct, t_data *data_struct)
 {
-	t_philo			*philo_struct;
-
-	philo_struct = (t_philo *)params;
-	if (philo_struct->id % 2 == 1)
-		ft_precise_sleep(philo_struct->data->eat_t);
-	while (philo_struct->lunch_count < philo_struct->data->lunches)
+	if (philo_struct)
+		ft_precise_sleep(data_struct->eat_t);
+	while (philo_struct->lunch_count < data_struct->lunches)
 	{
 		ft_take_forks(philo_struct);
 		ft_eat(philo_struct);
 		ft_sleep(philo_struct);
-		if (philo_struct->lunch_count >= philo_struct->data->lunches)
-			return (NULL);
+		if (philo_struct->lunch_count >= philo_struct->data_struct->lunches)
+			exit(EXIT_SUCCESS);
 		ft_think(philo_struct);
 	}
-	return (NULL);
+	exit(EXIT_SUCCESS);
 }
 
 void	ft_take_forks(t_philo *philo_struct)
 {
-	pthread_mutex_lock(philo_struct->r_fork);
+	sem_wait(philo_struct->data_struct->forks);
 	printf("%lld %d has taken a fork\n",
 	   	ft_ms_from_start(philo_struct), philo_struct->id);
-	pthread_mutex_lock(philo_struct->l_fork);
+	sem_wait(philo_struct->data_struct->forks);
 	printf("%lld %d has taken a fork\n",
 	   	ft_ms_from_start(philo_struct), philo_struct->id);
 }
@@ -47,16 +44,16 @@ void	ft_eat(t_philo *philo_struct)
 	philo_struct->last_lunch = ft_ms_from_start(philo_struct);
 	printf("%lld %d is eating\n",
 		ft_ms_from_start(philo_struct), philo_struct->id);
-	ft_precise_sleep(philo_struct->data->eat_t);
-	pthread_mutex_unlock(philo_struct->r_fork);
-	pthread_mutex_unlock(philo_struct->l_fork);
+	ft_precise_sleep(philo_struct->data_struct->eat_t);
+	sem_post(philo_struct->data_struct->forks);
+	sem_post(philo_struct->data_struct->forks);
 }
 
 void	ft_sleep(t_philo *philo_struct)
 {
 	printf("%lld %d is sleeping\n",
 		ft_ms_from_start(philo_struct), philo_struct->id);
-	ft_precise_sleep(philo_struct->data->sleep_t);
+	ft_precise_sleep(philo_struct->data_struct->sleep_t);
 }
 
 void	ft_think(t_philo *philo_struct)

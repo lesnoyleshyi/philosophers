@@ -7,10 +7,11 @@ HEADER	=	philo.h
 
 B_HEADER =	philo_bonus.h
 
-SRC_F	=	philo.c	get_arguments_funcs.c	simulation_funcs.c	philo_utils.c \
-			watch_funcs.c
+SRC_F	=	philo.c	get_arguments_funcs.c	philo_utils.c \
+			simulation_funcs.c	watch_funcs.c
 
-B_SRC_F	=	philo_bonus.c
+B_SRC_F	=	philo_bonus.c	get_arguments_funcs_bonus.c	philo_utils_bonus.c \
+			simulation_funcs_bonus.c	watch_funcs_bonus.c
 
 SRC_DIR	=	./srcs
 
@@ -37,7 +38,7 @@ ${NAME}		:	${OBJS}
 				${CC} ${CFLAGS} ${OBJS} -o ${NAME}
 
 bonus		:
-				make all NAME=${B_NAME} OBJS=${B_OBJS}
+				make all NAME=${B_NAME} OBJS="${B_OBJS}" HEADER=${B_HEADER}
 
 clean		:
 				rm -rf ${OBJS}

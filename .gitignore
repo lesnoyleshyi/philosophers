@@ -1,3 +1,4 @@
 *.o
 philo
 nohup.out
+/philo_bonus
