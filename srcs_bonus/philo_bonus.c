@@ -35,6 +35,7 @@ int	main(int argc, char *argv[])
 		kill(data_struct.pid_arr[i], 9);
 	}
 	free(data_struct.pid_arr);
+	free(data_struct.ph_arr);
 	return (0);
 }
 
