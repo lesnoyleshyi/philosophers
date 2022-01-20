@@ -12,56 +12,27 @@
 
 #include "philo_bonus.h"
 
-void	*ft_watch(void *ph_array)
+void	*ft_watch(void *philo_struct)
 {
-	t_philo			*ph_arr;
-	t_data			*data;
-	int				i;
-	long long int	death_time_ms;
+	t_philo		*ph_struct;
+	t_data		*data;
 
-	ph_arr = (t_philo *) ph_array;
-	data = (ph_arr[0].data_struct);
-
+	ph_struct = (t_philo *) philo_struct;
+	data = (ph_struct->data_struct);
 	while (1)
 	{
-		i = -1;
-		while (++i < data->philo_count)
+		if (ph_struct->lunch_count == data->lunches)
 		{
-			death_time_ms = ft_ms_from_start(&ph_arr[i]);
-			if (ph_arr[i].lunch_count < data->lunches
-			&& ft_ms_from_start(&ph_arr[i]) - ph_arr[i].last_lunch > data->die_t)
-			{
-				sem_wait(data->printer);
-				printf("%lld %d died\n", ft_ms_from_start(&ph_arr[i]), i + 1);
-				printf("Death_time_ms:\t\t%lld\n", death_time_ms);
-				printf("Last lunch time_ms: \t%lld\n", ph_arr[i].last_lunch);
-				return (NULL);
-			}
+			ft_precise_sleep(data->die_t);
+			exit(EXIT_SUCCESS);
 		}
-		if (ft_maybe_thats_all(ph_arr) == 0)
-			return (NULL);
+		if ((ft_ms_from_start(ph_struct) - ph_struct->last_lunch) > data->die_t)
+		{
+			sem_wait(data->printer);
+			printf("%lld %d died\n",
+				ft_ms_from_start(ph_struct), ph_struct->id);
+			exit(EXIT_SUCCESS);
+		}
+		usleep(1000);
 	}
-}
-
-int	ft_maybe_thats_all(t_philo *ph_arr)
-{
-	int	i;
-	int	philo_count;
-	int	finished_eating_count;
-
-	finished_eating_count = 0;
-	philo_count = ph_arr[0].data_struct->philo_count;
-	i = 0;
-	while (i < philo_count)
-	{
-		if (ph_arr[i].lunch_count == ph_arr[0].data_struct->lunches)
-			finished_eating_count += 1;
-		i++;
-	}
-	if (finished_eating_count == philo_count)
-	{
-		ft_precise_sleep(ph_arr[0].data_struct->eat_t - 10);
-		return (0);
-	}
-	return (1);
 }

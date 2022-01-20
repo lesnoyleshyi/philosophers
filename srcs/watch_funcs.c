@@ -21,7 +21,6 @@ void	*ft_watch(void *ph_array)
 
 	ph_arr = (t_philo *) ph_array;
 	data = (ph_arr[0].data);
-//	usleep(data->die_t * 1000);
 	while (1)
 	{
 		i = -1;
@@ -29,12 +28,10 @@ void	*ft_watch(void *ph_array)
 		{
 			death_time_ms = ft_ms_from_start(&ph_arr[i]);
 			if (ph_arr[i].lunch_count < data->lunches
-			&& ft_ms_from_start(&ph_arr[i]) - ph_arr[i].last_lunch > data->die_t)
+				&& death_time_ms - ph_arr[i].last_lunch > data->die_t)
 			{
 				pthread_mutex_lock(data->printer);
 				printf("%lld %d died\n", ft_ms_from_start(&ph_arr[i]), i + 1);
-				printf("Death_time_ms:\t\t%lld\n", death_time_ms);
-				printf("Last lunch time_ms: \t%lld\n", ph_arr[i].last_lunch);
 				return (NULL);
 			}
 		}
@@ -42,23 +39,6 @@ void	*ft_watch(void *ph_array)
 			return (NULL);
 	}
 }
-
-//unsigned int	ft_last_lunch_time_delta(t_philo *philo_struct)
-//{
-//	struct timeval	now;
-//	long long		now_mcs;
-//	long long		last_lunch_mcs;
-//
-//	gettimeofday(&now, NULL);
-//	last_lunch_mcs = philo_struct->last_lunch.tv_sec * 1000000
-//		+ philo_struct->last_lunch.tv_usec;
-//	now_mcs = now.tv_sec * 1000000
-//		+ now.tv_usec;
-//	if (last_lunch_mcs >= now_mcs)
-//		return (0);
-//	else
-//		return ((now_mcs - last_lunch_mcs) / 1000);
-//}
 
 int	ft_maybe_thats_all(t_philo *ph_arr)
 {

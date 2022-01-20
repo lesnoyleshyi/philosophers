@@ -53,13 +53,11 @@ int				ft_read_argv(t_data *data_struct, char *argv[]);
 int				ft_create_philosophers(pid_t **pid_arr, t_data *data_struct);
 int				ft_create_semaphores(t_data *data_struct, int fork_count);
 
-
 long long		ft_uint_atoi(char *str);
 void			ft_get_start_time(t_data *data_struct);
 void			ft_precise_sleep(unsigned int milliseconds);
 long long		ft_ms_from_start(t_philo *philo_struct);
 unsigned int	ft_last_lunch_delta(t_philo *philo_struct);
-
 
 void			ft_simulation(t_philo *philo_struct, t_data *data_struct);
 void			ft_run_instance(t_philo *philo_struct, t_data *data_struct);
@@ -70,6 +68,5 @@ void			ft_take_forks(t_philo *philo_struct);
 void			ft_eat(t_philo *philo_struct);
 void			ft_sleep(t_philo *philo_struct);
 void			ft_think(t_philo *philo_struct);
-
 
 #endif

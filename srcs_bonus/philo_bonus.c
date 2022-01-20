@@ -24,7 +24,9 @@ int	main(int argc, char *argv[])
 	{
 		data_struct.pid_arr[i] = fork();
 		if (data_struct.pid_arr[i] == 0)
-			ft_run_instance(&(data_struct.ph_arr[i]), &data_struct);
+		{
+			ft_run_instance(&data_struct.ph_arr[i], &data_struct);
+		}
 	}
 	wait(&ret);
 	i = -1;
@@ -38,15 +40,6 @@ int	main(int argc, char *argv[])
 
 void	ft_run_instance(t_philo *philo_struct, t_data *data_struct)
 {
-	int			ret;
-	pthread_t	watcher_thread;
-
 	ft_simulation(philo_struct, data_struct);
-	ret = pthread_create(&watcher_thread, NULL, ft_watch, philo_struct);
-	if (ret != 0)
-		ft_perror_and_exit("Error creating watcher thread");
-	ret = pthread_join(watcher_thread, NULL);
-	if (ret != 0)
-		ft_perror_and_exit("Error joining watcher thread");
 	exit(EXIT_SUCCESS);
 }

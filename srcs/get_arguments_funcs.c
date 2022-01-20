@@ -36,8 +36,9 @@ int	ft_read_argv(t_data *params, char *argv[])
 	params->eat_t = ft_uint_atoi(argv[3]);
 	params->sleep_t = ft_uint_atoi(argv[4]);
 	params->lunches = ft_uint_atoi(argv[5]);
-	if (philo_count == -1 || params->die_t == -1 || params->eat_t == -1
-		|| params->sleep_t == -1 || params->lunches == -1)
+	if (philo_count < 1 || philo_count > 256
+		|| params->die_t < 1 || params->eat_t < 1 || params->sleep_t < 1
+		|| params->lunches == -1)
 		return (ft_perror_and_return("Unsupported values in arguments", 1));
 	if (params->lunches == 0)
 		return (ft_perror_and_return("What does it mean 'eat 0 times?'", 1));

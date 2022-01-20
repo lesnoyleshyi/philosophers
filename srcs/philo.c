@@ -26,7 +26,7 @@ int	main(int argc, char *argv[])
 	ft_get_start_time(&params);
 	while (++i < params.philo_count)
 	{
-		ret = pthread_create(&ph_arr[i].dude, NULL, simulation, &ph_arr[i]);
+		ret = pthread_create(&ph_arr[i].dude, NULL, ft_simulation, &ph_arr[i]);
 		if (ret != 0)
 			return (ft_perror_and_return("Error creating threads", 1));
 	}

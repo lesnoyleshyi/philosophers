@@ -38,26 +38,24 @@ ${NAME}		:	${OBJS}
 				${CC} ${CFLAGS} ${OBJS} -o ${NAME}
 
 bonus		:
-				make all NAME=${B_NAME} OBJS="${B_OBJS}" HEADER=${B_HEADER}
+				make all NAME=${B_NAME} OBJS="${B_OBJS}" \
+ 										SRC_DIR=${B_SRC_DIR} HEADER=${B_HEADER}
 
 clean		:
-				rm -rf ${OBJS}
+				rm -rf ${OBJS} ${B_OBJS}
 
 fclean		:	clean
-				rm -rf ${NAME}
+				rm -rf ${NAME} ${B_NAME}
 
 debug		:
 				${CC} ${CFLAGS} -g ${SRCS} -L./libft -lft -o ${NAME}_debug
 
 run			:	${NAME}
-				./${NAME} 5 410 200 200
+				./${NAME} 4 410 200 200
 
 all			:	${NAME}
 
 re			:	fclean ${NAME}
 
-test_o		:
-				${OBJS}
-
-test_s		:
-				${SRCS}
+ch_leaks_b	:
+				leaks -atExit -- ./philo_bonus 4 410 200 200 2

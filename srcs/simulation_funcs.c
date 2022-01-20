@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void	*simulation(void *params)
+void	*ft_simulation(void *params)
 {
 	t_philo			*philo_struct;
 
@@ -35,10 +35,10 @@ void	ft_take_forks(t_philo *philo_struct)
 {
 	pthread_mutex_lock(philo_struct->r_fork);
 	printf("%lld %d has taken a fork\n",
-	   	ft_ms_from_start(philo_struct), philo_struct->id);
+		ft_ms_from_start(philo_struct), philo_struct->id);
 	pthread_mutex_lock(philo_struct->l_fork);
 	printf("%lld %d has taken a fork\n",
-	   	ft_ms_from_start(philo_struct), philo_struct->id);
+		ft_ms_from_start(philo_struct), philo_struct->id);
 }
 
 void	ft_eat(t_philo *philo_struct)
